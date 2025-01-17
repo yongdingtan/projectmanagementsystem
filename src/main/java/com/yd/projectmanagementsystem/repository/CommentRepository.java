@@ -8,6 +8,6 @@ import com.yd.projectmanagementsystem.model.Comment;
 
 public interface CommentRepository extends JpaRepository<Comment, Long>{
 	
-	List<Comment> findCommentByIssueId(Long issueId);
+	List<Comment> findByIssueId(Long issueId);
 
 }

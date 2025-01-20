@@ -119,7 +119,8 @@ public class ProjectController {
 	    User user = userService.findUserProfileByJwt(jwt);
 	    projectService.deleteProject(projectId, user.getId());
 
-	    MessageResponse res = new MessageResponse("Project deleted successfully", Map.of("projectId", projectId));
+	    MessageResponse res = new MessageResponse();
+	    res.setMessage("Project deleted successfully");
 	    return new ResponseEntity<>(res, HttpStatus.OK);
 	}
 	
@@ -164,7 +165,8 @@ public class ProjectController {
 		
 		invitationService.sendInvitation(req.getEmail(), req.getProjectId());
 		
-		MessageResponse res = new MessageResponse("User invitation sent");
+		MessageResponse res = new MessageResponse();
+		res.setMessage("User invitation sent");
 		
 		return new ResponseEntity<>(res, HttpStatus.OK);
 	}

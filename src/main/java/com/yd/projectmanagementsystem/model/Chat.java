@@ -39,6 +39,14 @@ public class Chat {
 	@ManyToMany
 	private List<User> users = new ArrayList<>();
 
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -62,6 +70,16 @@ public class Chat {
 	public void setUsers(List<User> users) {
 		this.users = users;
 	}
+
+	public List<Message> getMessages() {
+		return messages;
+	}
+
+	public void setMessages(List<Message> messages) {
+		this.messages = messages;
+	}
+	
+	
 	
 	
 

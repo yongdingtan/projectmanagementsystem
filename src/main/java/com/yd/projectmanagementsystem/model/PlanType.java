@@ -4,6 +4,6 @@ public enum PlanType {
 	
 	FREE,
 	MONTHLY,
-	ANNUALY
+	ANNUALLY
 
 }

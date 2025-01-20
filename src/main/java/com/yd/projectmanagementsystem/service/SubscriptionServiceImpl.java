@@ -55,7 +55,7 @@ public class SubscriptionServiceImpl implements SubscriptionService{
 		
 		if(planType.equals(PlanType.MONTHLY)) {
 			subscription.setSubscriptionEndDate(LocalDate.now().plusMonths(1));
-		} else if(planType.equals(PlanType.ANNUALY)) {
+		} else if(planType.equals(PlanType.ANNUALLY)) {
 			subscription.setSubscriptionEndDate(LocalDate.now().plusMonths(12));
 		}
 		

@@ -19,6 +19,7 @@ import com.yd.projectmanagementsystem.model.User;
 import com.yd.projectmanagementsystem.repository.UserRepository;
 import com.yd.projectmanagementsystem.request.LoginRequest;
 import com.yd.projectmanagementsystem.response.AuthResponse;
+import com.yd.projectmanagementsystem.service.SubscriptionService;
 import com.yd.projectmanagementsystem.service.UserDetailsImpl;
 
 @RestController
@@ -34,6 +35,9 @@ public class AuthController {
 	@Autowired
 	private UserDetailsImpl userDetails;
 	
+	@Autowired
+	private SubscriptionService subscriptionService;
+	
 	@PostMapping("/signup")
 	public ResponseEntity<AuthResponse> createUserHandler(@RequestBody User user) throws Exception {
 		User isUserExist = userRepository.findByEmail(user.getEmail());
@@ -48,6 +52,7 @@ public class AuthController {
 		createdUser.setFullName(user.getFullName());
 		
 		User savedUser = userRepository.save(createdUser);
+		subscriptionService.createSubscription(savedUser);
 		
 		Authentication authentication = new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword());
 		SecurityContextHolder.getContext().setAuthentication(authentication);

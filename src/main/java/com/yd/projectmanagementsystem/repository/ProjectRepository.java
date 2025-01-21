@@ -12,7 +12,7 @@ import com.yd.projectmanagementsystem.model.User;
 
 public interface ProjectRepository extends JpaRepository<Project, Long>{
 	
-	List<Project> findByNameAndTeam(String partialName, User user);
+	List<Project> findByNameAndOwner(String partialName, User user);
 	
 	List<Project> findByOwner(User owner);
 

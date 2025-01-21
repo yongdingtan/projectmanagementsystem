@@ -160,7 +160,7 @@ public class ProjectServiceImpl implements ProjectService{
 	@Override
 	public List<Project> searchProjects(String keyword, User user) throws Exception {
 		
-		return projectRepository.findByNameAndTeam(keyword, user);
+		return projectRepository.findByNameAndOwner(keyword, user);
 	}
 
 }

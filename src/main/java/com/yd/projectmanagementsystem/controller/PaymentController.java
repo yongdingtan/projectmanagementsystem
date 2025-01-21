@@ -50,7 +50,7 @@ public class PaymentController {
 	        @RequestHeader("Authorization") String jwt, 
 	        @PathVariable PlanType planType) throws Exception {
 
-	    User user = userService.findUserProfileByJwt(jwt);
+	    userService.findUserProfileByJwt(jwt);
 	    int amount = 5;
 	    if (planType.equals(PlanType.ANNUALLY)) {
 	        amount *= 12;

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.yd.projectmanagementsystem.model.Chat;
 import com.yd.projectmanagementsystem.model.Project;
+import com.yd.projectmanagementsystem.model.Team;
 import com.yd.projectmanagementsystem.model.User;
 
 public interface ProjectService {

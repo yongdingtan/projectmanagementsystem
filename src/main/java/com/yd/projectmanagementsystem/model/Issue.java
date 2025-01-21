@@ -29,8 +29,7 @@ public class Issue {
 	private String title;
 	private String description;
 	private String status;
-	@Column(name = "project_id_ref") // Distinguishing the physical column name
-	private Long projectId;
+	private Long projectID;
 	private String priority;
 	private LocalDate dueDate;
 	private List<String> tags = new ArrayList<>();
@@ -40,7 +39,6 @@ public class Issue {
 	
 	@JsonIgnore
 	@ManyToOne
-	@JoinColumn(name = "project_ref_id") // Adjusting the column name
 	private Project project;
 	
 	@JsonIgnore
@@ -76,12 +74,12 @@ public class Issue {
 		this.status = status;
 	}
 
-	public Long getProjectId() {
-		return projectId;
+	public Long getProjectID() {
+		return projectID;
 	}
 
-	public void setProjectId(Long projectId) {
-		this.projectId = projectId;
+	public void setProjectID(Long projectID) {
+		this.projectID = projectID;
 	}
 
 	public String getPriority() {

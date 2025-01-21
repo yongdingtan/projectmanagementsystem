@@ -21,7 +21,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.yd.projectmanagementsystem.model.Chat;
 import com.yd.projectmanagementsystem.model.Invitation;
 import com.yd.projectmanagementsystem.model.Project;
+import com.yd.projectmanagementsystem.model.Team;
 import com.yd.projectmanagementsystem.model.User;
+import com.yd.projectmanagementsystem.repository.TeamRepository;
 import com.yd.projectmanagementsystem.request.InviteRequest;
 import com.yd.projectmanagementsystem.response.MessageResponse;
 import com.yd.projectmanagementsystem.service.InvitationService;
@@ -53,7 +55,6 @@ public class ProjectController {
 	    if (jwt == null || jwt.isEmpty()) {
 	        throw new JwtException("JWT token is missing");
 	    }
-		
 		User user = userService.findUserProfileByJwt(jwt);
 		List<Project> projects = projectService.getProjectByTeam(user, category, tag);
 		
@@ -81,7 +82,6 @@ public class ProjectController {
 	    if (jwt == null || jwt.isEmpty()) {
 	        throw new JwtException("JWT token is missing");
 	    }
-		
 		User user = userService.findUserProfileByJwt(jwt);
 		Project createdProject = projectService.createProject(project, user);
 		

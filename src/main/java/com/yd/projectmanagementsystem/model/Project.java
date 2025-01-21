@@ -37,28 +37,36 @@ public class Project {
 	private String description;
 	private String category;
 	
-    @ElementCollection // For simple collections like tags
-    @CollectionTable(name = "project_tags", joinColumns = @JoinColumn(name = "project_id"))
-    @Column(name = "tag")
     private List<String> tags = new ArrayList<>();
 	
 	@JsonIgnore
 	@OneToOne(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Chat chat;
 	
-	@ManyToOne
+	@OneToOne
 	private User owner;
 	
 	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Issue> issues = new ArrayList<>();
 	
-    @ManyToMany
-    @JoinTable(
-        name = "project_team",
-        joinColumns = @JoinColumn(name = "project_id"),
-        inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    private List<User> team = new ArrayList<>();
+	@OneToOne
+    private Team team;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public List<Issue> getIssues() {
+		return issues;
+	}
+
+	public void setIssues(List<Issue> issues) {
+		this.issues = issues;
+	}
 
 	public String getName() {
 		return name;
@@ -108,11 +116,11 @@ public class Project {
 		this.owner = owner;
 	}
 
-	public List<User> getTeam() {
+	public Team getTeam() {
 		return team;
 	}
 
-	public void setTeam(List<User> team) {
+	public void setTeam(Team team) {
 		this.team = team;
 	}
 	

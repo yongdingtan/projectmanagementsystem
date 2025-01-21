@@ -6,9 +6,14 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
@@ -32,7 +37,10 @@ public class Project {
 	private String description;
 	private String category;
 	
-	private List<String> tags = new ArrayList<>();
+    @ElementCollection // For simple collections like tags
+    @CollectionTable(name = "project_tags", joinColumns = @JoinColumn(name = "project_id"))
+    @Column(name = "tag")
+    private List<String> tags = new ArrayList<>();
 	
 	@JsonIgnore
 	@OneToOne(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -44,8 +52,13 @@ public class Project {
 	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Issue> issues = new ArrayList<>();
 	
-	@ManyToMany
-	private List<User> team = new ArrayList<>();
+    @ManyToMany
+    @JoinTable(
+        name = "project_team",
+        joinColumns = @JoinColumn(name = "project_id"),
+        inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private List<User> team = new ArrayList<>();
 
 	public String getName() {
 		return name;

@@ -32,7 +32,7 @@ public class IssueController {
 	@Autowired
 	private UserService userService;
 	
-	@GetMapping("/{issueId")
+	@GetMapping("/{issueId}")
 	public ResponseEntity<Issue> getIssueById(@PathVariable Long issueId) throws Exception {
 		return ResponseEntity.ok(issueService.getIssueById(issueId));
 	}

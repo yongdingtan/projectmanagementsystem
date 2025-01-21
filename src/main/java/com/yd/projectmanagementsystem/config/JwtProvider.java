@@ -5,7 +5,6 @@ import org.springframework.security.core.Authentication;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 
 public class JwtProvider {
 	
@@ -21,8 +20,9 @@ public class JwtProvider {
 	
 	public static String getEmailFromToken(String jwt) {
 		
+		jwt=jwt.substring(7);
 	    Claims claims = Jwts.parser().verifyWith(JwtUtil.getSigningKey()).build().parseSignedClaims(jwt).getPayload();
-	    return String.valueOf(claims.get("email"));
+	    return claims.get("email", String.class);
 	    
 	}
 

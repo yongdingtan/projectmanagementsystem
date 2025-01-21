@@ -12,6 +12,8 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.FilterChain;
@@ -29,25 +31,41 @@ public class JwtTokenValidated extends OncePerRequestFilter {
 		
 		
 		
-		if(jwt!=null) {
-			jwt=jwt.substring(7);
-			
-			try {
-				SecretKey key = Keys.hmacShaKeyFor(JwtConstant.SECRET_KEY.getBytes());
-				// Parse the JWT token and retrieve claims
-		        Claims claims = Jwts.parser().verifyWith(key).build().parseSignedClaims(jwt).getPayload();
-		        
-		        String email = String.valueOf(claims.get("email"));
-		        String authorities = String.valueOf(claims.get("authorities"));
-		        
+		if (jwt != null) {
+		    jwt = jwt.substring(7); // Remove "Bearer " prefix if present
+
+		    try {
+		        // Create a SecretKey for HMAC signing
+		        SecretKey key = Keys.hmacShaKeyFor(JwtConstant.SECRET_KEY.getBytes());
+
+		        // Parse and validate the JWT token
+		        Claims claims = Jwts.parser()
+				        	    .verifyWith(key)
+				        	    .build()
+				        	    .parseSignedClaims(jwt)
+				        	    .getPayload();
+
+		        // Retrieve claims
+		        String email = claims.get("email", String.class);
+		        String authorities = claims.get("authorities", String.class);
+
+		        // Convert authorities to a list of GrantedAuthority
 		        List<GrantedAuthority> auths = AuthorityUtils.commaSeparatedStringToAuthorityList(authorities);
+
+		        // Set authentication in the security context
 		        Authentication authentication = new UsernamePasswordAuthenticationToken(email, null, auths);
 		        SecurityContextHolder.getContext().setAuthentication(authentication);
-		        
-			} catch(Exception e) {
-				throw new BadCredentialsException("Invalid Token");
-			}
+
+		    } catch (ExpiredJwtException e) {
+		        throw new BadCredentialsException("Token has expired", e);
+		    } catch (JwtException e) {
+		    	System.out.println(jwt);
+		        throw new BadCredentialsException("Invalid Token", e);
+		    } catch (Exception e) {
+		        throw new BadCredentialsException("Token processing error", e);
+		    }
 		}
+
 		
 		filterChain.doFilter(request, response);
 		

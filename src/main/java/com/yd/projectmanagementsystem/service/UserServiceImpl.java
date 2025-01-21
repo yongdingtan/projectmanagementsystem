@@ -2,6 +2,7 @@ package com.yd.projectmanagementsystem.service;
 
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.yd.projectmanagementsystem.config.JwtProvider;
@@ -11,6 +12,7 @@ import com.yd.projectmanagementsystem.repository.UserRepository;
 @Service
 public class UserServiceImpl implements UserService{
 
+	@Autowired
 	private UserRepository userRepository;
 	
 	@Override

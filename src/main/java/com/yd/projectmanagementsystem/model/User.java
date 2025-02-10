@@ -50,6 +50,10 @@ public class User {
 	@OneToMany(mappedBy = "assignee", cascade = CascadeType.ALL)
 	private List<Issue> assignedIssues = new ArrayList<>();
 	
+	@JsonIgnore
+	@OneToMany(mappedBy = "reporter", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Issue> reportedIssues = new ArrayList<>();
+	
 	public String getFullName() {
 		return fullName;
 	}

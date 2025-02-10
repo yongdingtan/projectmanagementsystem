@@ -70,7 +70,7 @@ public class ProjectServiceImpl implements ProjectService{
 	}
 
 	@Override
-	public List<Project> getProjectByTeam(User user, String category, String tag) throws Exception {
+	public List<Project> getProjectByUserAndCategoryAndTag(User user, String category, String tag) throws Exception {
 		
 		List<Project> projects = projectRepository.findByOwner(user);
 		

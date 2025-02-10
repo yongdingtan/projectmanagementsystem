@@ -2,6 +2,8 @@ package com.yd.projectmanagementsystem.request;
 
 import java.time.LocalDate;
 
+import com.yd.projectmanagementsystem.model.User;
+
 import lombok.Data;
 
 @Data
@@ -12,7 +14,11 @@ public class IssueRequest {
 	private String status;
 	private Long projectId;
 	private String priority;
+	private LocalDate createdDate;
 	private LocalDate dueDate;
+	
+	private User reporter;
+	private User assignee;
 	
 	public String getTitle() {
 		return title;
@@ -44,11 +50,29 @@ public class IssueRequest {
 	public void setPriority(String priority) {
 		this.priority = priority;
 	}
+	public LocalDate getCreatedDate() {
+		return createdDate;
+	}
+	public void setCreatedDate(LocalDate createdDate) {
+		this.createdDate = createdDate;
+	}
 	public LocalDate getDueDate() {
 		return dueDate;
 	}
 	public void setDueDate(LocalDate dueDate) {
 		this.dueDate = dueDate;
+	}
+	public User getReporter() {
+		return reporter;
+	}
+	public void setReporter(User reporter) {
+		this.reporter = reporter;
+	}
+	public User getAssignee() {
+		return assignee;
+	}
+	public void setAssignee(User assignee) {
+		this.assignee = assignee;
 	}
 	
 	

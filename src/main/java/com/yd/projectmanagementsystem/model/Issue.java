@@ -8,7 +8,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -29,13 +29,19 @@ public class Issue {
 	private String title;
 	private String description;
 	private String status;
-	private Long projectID;
 	private String priority;
+	private LocalDate createdDate;
 	private LocalDate dueDate;
+	
+	@ElementCollection
 	private List<String> tags = new ArrayList<>();
 	
 	@ManyToOne
 	private User assignee;
+	
+	@ManyToOne
+	@JoinColumn(name = "reporter_id", nullable = false)
+	private User reporter;
 	
 	@JsonIgnore
 	@ManyToOne
@@ -74,14 +80,6 @@ public class Issue {
 		this.status = status;
 	}
 
-	public Long getProjectID() {
-		return projectID;
-	}
-
-	public void setProjectID(Long projectID) {
-		this.projectID = projectID;
-	}
-
 	public String getPriority() {
 		return priority;
 	}
@@ -89,6 +87,16 @@ public class Issue {
 	public void setPriority(String priority) {
 		this.priority = priority;
 	}
+
+	public LocalDate getCreatedDate() {
+		return createdDate;
+	}
+
+
+	public void setCreatedDate(LocalDate createdDate) {
+		this.createdDate = createdDate;
+	}
+
 
 	public LocalDate getDueDate() {
 		return dueDate;
@@ -112,6 +120,14 @@ public class Issue {
 
 	public void setAssignee(User assignee) {
 		this.assignee = assignee;
+	}
+
+	public User getReporter() {
+		return reporter;
+	}
+
+	public void setReporter(User reporter) {
+		this.reporter = reporter;
 	}
 
 	public Project getProject() {

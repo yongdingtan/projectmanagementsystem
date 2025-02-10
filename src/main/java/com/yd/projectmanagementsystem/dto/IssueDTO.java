@@ -22,8 +22,10 @@ public class IssueDTO {
 	private String status;
 	private Long projectId;
 	private String priority;
+	private LocalDate createdDate;
 	private LocalDate dueDate;
 	private List<String> tags = new ArrayList<>();
+	private User reporter;
 	private User assignee;
 	private Project project;
 	
@@ -63,6 +65,12 @@ public class IssueDTO {
 	public void setPriority(String priority) {
 		this.priority = priority;
 	}
+	public LocalDate getCreatedDate() {
+		return createdDate;
+	}
+	public void setCreatedDate(LocalDate createdDate) {
+		this.createdDate = createdDate;
+	}
 	public LocalDate getDueDate() {
 		return dueDate;
 	}
@@ -74,6 +82,12 @@ public class IssueDTO {
 	}
 	public void setTags(List<String> tags) {
 		this.tags = tags;
+	}
+	public User getReporter() {
+		return reporter;
+	}
+	public void setReporter(User reporter) {
+		this.reporter = reporter;
 	}
 	public User getAssignee() {
 		return assignee;

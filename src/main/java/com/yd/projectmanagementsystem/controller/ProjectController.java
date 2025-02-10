@@ -56,7 +56,7 @@ public class ProjectController {
 	        throw new JwtException("JWT token is missing");
 	    }
 		User user = userService.findUserProfileByJwt(jwt);
-		List<Project> projects = projectService.getProjectByTeam(user, category, tag);
+		List<Project> projects = projectService.getProjectByUserAndCategoryAndTag(user, category, tag);
 		
 		return new ResponseEntity<>(projects, HttpStatus.OK);
 	}

@@ -188,5 +188,10 @@ public class ProjectController {
 		
 		return new ResponseEntity<>(invitation, HttpStatus.ACCEPTED);
 	}
+	
+	@GetMapping("/{projectId}/team")
+	public ResponseEntity<List<User>> getTeamByProjectId(@PathVariable Long projectId) throws Exception {
+		return new ResponseEntity<>(projectService.getTeam(projectId), HttpStatus.OK);
+	}
 
 }

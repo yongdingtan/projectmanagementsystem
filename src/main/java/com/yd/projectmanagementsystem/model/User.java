@@ -1,35 +1,23 @@
 package com.yd.projectmanagementsystem.model;
 
-
 import java.util.ArrayList;
 import java.util.List;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
-import lombok.Data;
-
 @Entity
-@Data 
 public class User {
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
-	private String fullName;
-	private String email;
-	
-	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-	private String password;
+    private String fullName;
+    private String email;
 
-	private int projectSize;
-	
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private String password;
+
 	public Long getId() {
 		return id;
 	}
@@ -38,22 +26,6 @@ public class User {
 		this.id = id;
 	}
 
-	public int getProjectSize() {
-		return projectSize;
-	}
-
-	public void setProjectSize(int projectSize) {
-		this.projectSize = projectSize;
-	}
-	
-	@JsonIgnore
-	@OneToMany(mappedBy = "assignee", cascade = CascadeType.ALL)
-	private List<Issue> assignedIssues = new ArrayList<>();
-	
-	@JsonIgnore
-	@OneToMany(mappedBy = "reporter", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Issue> reportedIssues = new ArrayList<>();
-	
 	public String getFullName() {
 		return fullName;
 	}
@@ -77,5 +49,5 @@ public class User {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-
+    
 }

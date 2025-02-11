@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.yd.projectmanagementsystem.dto.UserDTO;
 import com.yd.projectmanagementsystem.model.Chat;
 import com.yd.projectmanagementsystem.model.Project;
 import com.yd.projectmanagementsystem.model.Team;
@@ -36,39 +37,40 @@ public class ProjectServiceImpl implements ProjectService{
 
 	@Override
 	public Project createProject(Project project, User user) throws Exception {
-		
-		Project createdProject = new Project();
-		createdProject.setOwner(user);
-		createdProject.setTags(project.getTags());
-		createdProject.setName(project.getName());
-		createdProject.setCategory(project.getCategory());
-		createdProject.setDescription(project.getDescription());
-		Team team = createdProject.getTeam();
-		if (team == null) {
-		    team = new Team();
-		}
-		List<User> members = team.getUsers();
-		if(members == null) {
-			members = new ArrayList<User>();
-		}
-		members.add(user);
-		team.setUsers(members);
-		createdProject.setTeam(team);
-		teamRepository.save(team);
-		
-		Project savedProject = projectRepository.save(createdProject);
-		user.setProjectSize(user.getProjectSize()+1);
-		userRepository.save(user);
-		
-		Chat chat = new Chat();
-		chat.setProject(savedProject);
-		
-		Chat projectChat = chatService.createChat(chat);
-		savedProject.setChat(projectChat);
-		
-		return savedProject;
-	}
+	    // Create the project and set its fields
+	    Project createdProject = new Project();
+	    createdProject.setOwner(user);
+	    createdProject.setTags(project.getTags());
+	    createdProject.setName(project.getName());
+	    createdProject.setCategory(project.getCategory());
+	    createdProject.setDescription(project.getDescription());
 
+	    // Save the project first
+	    Project savedProject = projectRepository.save(createdProject);
+
+	    // Create the team and set its fields
+	    Team team = new Team();
+	    List<User> members = new ArrayList<>();
+	    members.add(user); // Add the owner as the first member
+	    team.setMembers(members);
+	    team.setProject(savedProject); // Associate the team with the saved project
+
+	    // Save the team
+	    teamRepository.save(team);
+
+	    // Update the project with the team
+	    savedProject.setTeam(team);
+	    projectRepository.save(savedProject); // Update the project to reflect the team association
+
+	    // Create and associate the chat
+	    Chat chat = new Chat();
+	    chat.setProject(savedProject);
+	    Chat projectChat = chatService.createChat(chat);
+	    savedProject.setChat(projectChat);
+
+	    // Save the updated project with the chat
+	    return projectRepository.save(savedProject);
+	}
 	@Override
 	public List<Project> getProjectByUserAndCategoryAndTag(User user, String category, String tag) throws Exception {
 		
@@ -125,9 +127,9 @@ public class ProjectServiceImpl implements ProjectService{
 		Project project = getProjectById(projectId);
 		User user = userService.findUserById(userId);
 		Team team = project.getTeam();
-		if(!team.getUsers().contains(user)) {
+		if(!team.getMembers().contains(user)) {
 			project.getChat().getUsers().add(user);
-			team.getUsers().add(user);
+			team.getMembers().add(user);
 			
 		}
 		teamRepository.save(team);
@@ -141,9 +143,9 @@ public class ProjectServiceImpl implements ProjectService{
 		Project project = getProjectById(projectId);
 		User user = userService.findUserById(userId);
 		Team team = project.getTeam();
-		if(team.getUsers().contains(user)) {
+		if(team.getMembers().contains(user)) {
 			project.getChat().getUsers().remove(user);
-			team.getUsers().remove(user);
+			team.getMembers().remove(user);
 			
 		}
 		teamRepository.save(team);
@@ -162,5 +164,9 @@ public class ProjectServiceImpl implements ProjectService{
 		
 		return projectRepository.findByNameAndOwner(keyword, user);
 	}
+	
+    public List<User> getTeam(Long projectId) throws Exception {
+        return projectRepository.findTeamMembersByProjectId(projectId);
+    }
 
 }

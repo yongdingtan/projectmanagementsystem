@@ -1,55 +1,34 @@
 package com.yd.projectmanagementsystem.model;
-
 import java.util.ArrayList;
 import java.util.List;
+import jakarta.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 @Entity
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Project {
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
-	
-	private String name;
-	private String description;
-	private String category;
-	
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    private String name;
+    private String description;
+    private String category;
+
     private List<String> tags = new ArrayList<>();
-	
-	@JsonIgnore
-	@OneToOne(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
-	private Chat chat;
-	
-	@OneToOne
-	private User owner;
-	
-	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Issue> issues = new ArrayList<>();
-	
-	@OneToOne
+
+    @JsonIgnore
+    @OneToOne(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Chat chat;
+
+    @ManyToOne
+    @JoinColumn(name = "owner_id") // Explicitly specify the foreign key column
+    private User owner;
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Issue> issues = new ArrayList<>();
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private Team team;
 
 	public Long getId() {
@@ -58,14 +37,6 @@ public class Project {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public List<Issue> getIssues() {
-		return issues;
-	}
-
-	public void setIssues(List<Issue> issues) {
-		this.issues = issues;
 	}
 
 	public String getName() {
@@ -116,6 +87,14 @@ public class Project {
 		this.owner = owner;
 	}
 
+	public List<Issue> getIssues() {
+		return issues;
+	}
+
+	public void setIssues(List<Issue> issues) {
+		this.issues = issues;
+	}
+
 	public Team getTeam() {
 		return team;
 	}
@@ -123,7 +102,8 @@ public class Project {
 	public void setTeam(Team team) {
 		this.team = team;
 	}
-	
-	
 
+    
 }
+
+

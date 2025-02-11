@@ -15,5 +15,8 @@ public interface ProjectRepository extends JpaRepository<Project, Long>{
 	List<Project> findByNameAndOwner(String partialName, User user);
 	
 	List<Project> findByOwner(User owner);
+	
+    @Query("SELECT t.members FROM Team t WHERE t.project.id = :projectId")
+    List<User> findTeamMembersByProjectId(@Param("projectId") Long projectId);
 
 }

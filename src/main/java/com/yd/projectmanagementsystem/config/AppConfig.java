@@ -15,26 +15,25 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 @Configuration
 @EnableWebSecurity
 public class AppConfig {
 
-    @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-            .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/api/**").authenticated() // Secure /api/** endpoints
-                .anyRequest().permitAll() // Allow all other requests
-            )
-            .addFilterBefore(new JwtTokenValidated(), BasicAuthenticationFilter.class) // Add JWT filter
-            .csrf(csrf -> csrf.disable()) // Disable CSRF
-            .cors(cors -> cors.configurationSource(corsConfigurationSource())); // Enable CORS
+	@Bean
+	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+	    http
+	        .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+	        .authorizeHttpRequests(authorize -> authorize
+	            .requestMatchers("/api/payment/upgrade_plan/success").permitAll() // Allow access to this endpoint
+	            .requestMatchers("/api/**").authenticated() // Secure all other /api/** endpoints
+	            .anyRequest().permitAll() // Allow all other requests
+	        )
+	        .addFilterBefore(new JwtTokenValidated(), BasicAuthenticationFilter.class) // Add JWT filter
+	        .csrf(csrf -> csrf.disable()) // Disable CSRF
+	        .cors(cors -> cors.configurationSource(corsConfigurationSource())); // Enable CORS
 
-        return http.build();
-    }
+	    return http.build();
+	}
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {

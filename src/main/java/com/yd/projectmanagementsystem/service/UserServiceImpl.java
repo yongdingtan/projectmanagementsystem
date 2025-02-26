@@ -44,7 +44,17 @@ public class UserServiceImpl implements UserService{
 	public User updateUserProjectSize(User user, int number) {
 		return userRepository.save(user);
 	}
+
+	@Override
+	public User findUserByPaymentId(String paymentId) throws Exception {
+        // Implement logic to find the user by paymentId
+        return userRepository.findUserByPaymentId(paymentId);
+    }
 	
-	
+	@Override
+    public void updateUserPaymentId(User user, String paymentId) {
+        user.setPaymentId(paymentId); // Update the paymentId
+        userRepository.save(user); // Save the updated user
+    }
 
 }

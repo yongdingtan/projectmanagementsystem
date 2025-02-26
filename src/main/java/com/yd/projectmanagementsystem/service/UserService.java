@@ -10,6 +10,10 @@ public interface UserService {
 	
 	User findUserById(Long userId) throws Exception;
 	
+	User findUserByPaymentId(String paymentId) throws Exception;
+	
 	User updateUserProjectSize(User user, int number);
+	
+	void updateUserPaymentId(User user, String paymentId) throws Exception;
 	
 }

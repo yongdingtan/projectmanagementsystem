@@ -26,132 +26,61 @@ import com.paypal.api.payments.Transaction;
 import com.paypal.base.rest.APIContext;
 import com.paypal.base.rest.PayPalRESTException;
 import com.yd.projectmanagementsystem.model.PlanType;
+import com.yd.projectmanagementsystem.model.Subscription;
+import com.yd.projectmanagementsystem.model.User;
 import com.yd.projectmanagementsystem.response.PaymentLinkResponse;
+import com.yd.projectmanagementsystem.service.PaymentService;
+import com.yd.projectmanagementsystem.service.SubscriptionService;
 import com.yd.projectmanagementsystem.service.UserService;
 
 @RestController
 @RequestMapping("/api/payment")
 public class PaymentController {
 
-	@Value("${paypal.api.merchantid}")
-	private String merchantId;
-
-	@Value("${paypal.api.publickey}")
-	private String publicKey;
-
-	@Value("${paypal.api.privatekey}")
-	private String privateKey;
-
-	private String MODE = "sandbox";
-
 	@Autowired
 	private UserService userService;
 
+	@Autowired
+	private SubscriptionService subscriptionService;
+
+	@Autowired
+	private PaymentService paymentService;
+
 	@PostMapping("/{planType}")
-	public ResponseEntity<PaymentLinkResponse> createPaymentLink(
-	        @RequestHeader("Authorization") String jwt,
-	        @PathVariable String planType) throws Exception {
+	public ResponseEntity<PaymentLinkResponse> createPaymentLink(@RequestHeader("Authorization") String jwt,
+			@PathVariable String planType) throws Exception {
 
-	    userService.findUserProfileByJwt(jwt);
-	    int amount = 5;
-	    if (planType.equals("ANNUALLY")) {
-	        amount *= 12;
-	        amount = (int) (amount * 0.7);
-	    }
+		int amount = 5;
+		if (planType.equals("ANNUALLY")) {
+			amount *= 12;
+			amount = (int) (amount * 0.7);
+		}
 
-	    try {
-	        // Configure PayPal API context
-	        APIContext apiContext = new APIContext(merchantId, privateKey, MODE);
+		try {
+			return ResponseEntity.ok(paymentService.createPayment(jwt, amount, planType));
 
-	        // Build payment details
-	        Amount paymentAmount = new Amount();
-	        paymentAmount.setCurrency("SGD");
-	        paymentAmount.setTotal(String.valueOf(amount));
-
-	        Transaction transaction = new Transaction();
-	        transaction.setAmount(paymentAmount);
-	        transaction.setDescription("Upgrade to " + planType + " plan");
-
-	        List<Transaction> transactions = new ArrayList<>();
-	        transactions.add(transaction);
-
-	        // Payer information
-	        Payer payer = new Payer();
-	        payer.setPaymentMethod("paypal");
-
-	        // Redirect URLs
-	        RedirectUrls redirectUrls = new RedirectUrls();
-	        redirectUrls.setCancelUrl("http://localhost:8080/api/payment/upgrade_plan/cancel");
-	        redirectUrls.setReturnUrl("http://localhost:8080/api/payment/upgrade_plan/success?planType=" + planType); // Include planType in the returnUrl
-
-	        // Create payment object
-	        Payment payment = new Payment();
-	        payment.setIntent("sale");
-	        payment.setPayer(payer);
-	        payment.setTransactions(transactions);
-	        payment.setRedirectUrls(redirectUrls);
-
-	        // Execute payment creation
-	        Payment createdPayment = payment.create(apiContext);
-
-	        // Extract approval link
-	        String approvalLink = createdPayment.getLinks().stream()
-	                .filter(link -> link.getRel().equals("approval_url"))
-	                .findFirst()
-	                .map(Links::getHref)
-	                .orElseThrow(() -> new RuntimeException("Approval URL not found"));
-
-	        // Prepare response
-	        PaymentLinkResponse response = new PaymentLinkResponse();
-	        response.setApprovalLink(approvalLink);
-	        response.setAmount(amount);
-	        response.setCurrency("SGD");
-
-	        return ResponseEntity.ok(response);
-
-	    } catch (PayPalRESTException e) {
-	        e.printStackTrace();
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-	                .body(new PaymentLinkResponse("Error creating payment link"));
-	    }
+		} catch (PayPalRESTException e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(new PaymentLinkResponse("Error creating payment link"));
+		}
 	}
 
 	@GetMapping("/upgrade_plan/success")
-	public RedirectView paymentSuccess(
-	        @RequestParam("paymentId") String paymentId,
-	        @RequestParam("PayerID") String payerId,
-	        @RequestParam("token") String token,
-	        @RequestParam("planType") String planType) {
+	public RedirectView paymentSuccess(@RequestParam("paymentId") String paymentId,
+			@RequestParam("PayerID") String payerId, @RequestParam("token") String token,
+			@RequestParam("planType") PlanType planType) {
 
-	    try {
-	        // Execute the payment
-	        APIContext apiContext = new APIContext(merchantId, privateKey, MODE);
-	        Payment payment = new Payment();
-	        payment.setId(paymentId);
+		try {
 
-	        PaymentExecution paymentExecution = new PaymentExecution();
-	        paymentExecution.setPayerId(payerId);
+			return paymentService.createRedirectLink(paymentId, payerId, token, planType);
 
-	        Payment executedPayment = payment.execute(apiContext, paymentExecution);
-
-	        if (executedPayment.getState().equals("approved")) {
-	            // Payment was successful
-	            // Redirect to the frontend success page with planType
-	            String frontendSuccessUrl = "http://localhost:5173/upgrade_plan/success?paymentId=" + paymentId + "&planType=" + planType;
-	            return new RedirectView(frontendSuccessUrl);
-	        } else {
-	            // Payment failed
-	            // Redirect to the frontend failure page
-	            String frontendFailureUrl = "http://localhost:5173/upgrade_plan/failure";
-	            return new RedirectView(frontendFailureUrl);
-	        }
-
-	    } catch (PayPalRESTException e) {
-	        e.printStackTrace();
-	        // Redirect to the frontend error page
-	        String frontendErrorUrl = "http://localhost:5173/upgrade_plan/error";
-	        return new RedirectView(frontendErrorUrl);
-	    }
+		} catch (Exception e) {
+			e.printStackTrace();
+			// Redirect to the frontend error page
+			String frontendErrorUrl = "http://localhost:5173/upgrade_plan/error";
+			return new RedirectView(frontendErrorUrl);
+		}
 	}
 
 	@GetMapping("/upgrade_plan/cancel")

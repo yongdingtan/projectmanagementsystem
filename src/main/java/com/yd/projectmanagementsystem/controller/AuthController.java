@@ -1,5 +1,9 @@
 package com.yd.projectmanagementsystem.controller;
 
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +24,7 @@ import com.yd.projectmanagementsystem.request.LoginRequest;
 import com.yd.projectmanagementsystem.response.AuthResponse;
 import com.yd.projectmanagementsystem.service.SubscriptionService;
 import com.yd.projectmanagementsystem.service.UserDetailsImpl;
+import com.yd.projectmanagementsystem.service.UserService;
 
 @RestController
 @RequestMapping("/auth")
@@ -36,23 +41,35 @@ public class AuthController {
 
     @Autowired
     private SubscriptionService subscriptionService;
+    
+    @Autowired
+    private UserService userService;
+    
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     @PostMapping("/signup")
     public ResponseEntity<AuthResponse> signup(@RequestBody User user) throws Exception {
-        User isUserExist = userRepository.findByEmail(user.getEmail());
-
+        // Check if the email is already in use
+        User isUserExist = userService.findUserByEmail(user.getEmail());
         if (isUserExist != null) {
             throw new Exception("Email already in use by another account");
         }
-
+        
+        // Create a new user
         User createdUser = new User();
         createdUser.setPassword(passwordEncoder.encode(user.getPassword()));
         createdUser.setEmail(user.getEmail());
         createdUser.setFullName(user.getFullName());
+        
+        // Assign a default role (e.g., "ROLE_USER")
+        createdUser.setRoles(Set.of("ROLE_USER")); // Use Set.of to create an immutable set
 
+        // Save the user to the database
         User savedUser = userRepository.save(createdUser);
+        // Create a subscription for the user (if applicable)
         subscriptionService.createSubscription(savedUser);
 
+        // Prepare the response
         AuthResponse res = new AuthResponse();
         res.setMessage("Signup success. Please log in.");
         res.setJwt(null); // No JWT token is generated during signup
@@ -75,15 +92,19 @@ public class AuthController {
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
-    private Authentication authenticate(String username, String password) {
-        UserDetails customUserDetails = userDetails.loadUserByUsername(username);
+    private Authentication authenticate(String email, String password) {
+        logger.info("Attempting to authenticate user: {}", email);
+        UserDetails customUserDetails = userDetails.loadUserByUsername(email);
         if (customUserDetails == null) {
+            logger.error("User not found: {}", email);
             throw new BadCredentialsException("Invalid credentials");
         }
         if (!passwordEncoder.matches(password, customUserDetails.getPassword())) {
+            logger.error("Invalid password for user: {}", email);
             throw new BadCredentialsException("Invalid password");
         }
 
+        logger.info("User authenticated successfully: {}", email);
         return new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
     }
 }

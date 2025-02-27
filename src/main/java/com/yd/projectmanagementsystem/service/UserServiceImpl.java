@@ -21,13 +21,16 @@ public class UserServiceImpl implements UserService{
 		
 		return findUserByEmail(email);
 	}
+	
+	@Override
+	public User findUserByFullName(String fullName) throws Exception {
+		User user = userRepository.findUserByFullName(fullName);
+		return user;
+	}
 
 	@Override
-	public User findUserByEmail(String emailId) throws Exception {
-		User user = userRepository.findByEmail(emailId);
-		if(user == null) {
-			throw new Exception("User not found");
-		}
+	public User findUserByEmail(String email) throws Exception {
+		User user = userRepository.findUserByEmail(email);
 		return user;
 	}
 

@@ -1,7 +1,7 @@
 package com.yd.projectmanagementsystem.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
+
 import jakarta.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -19,6 +19,9 @@ public class User {
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
+    
+    @ElementCollection(fetch = FetchType.EAGER)
+    private Set<String> roles; // Example: ["ROLE_USER", "ROLE_ADMIN"]
 
 	public Long getId() {
 		return id;
@@ -58,6 +61,14 @@ public class User {
 
 	public void setPaymentId(String paymentId) {
 		this.paymentId = paymentId;
+	}
+
+	public Set<String> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(Set<String> roles) {
+		this.roles = roles;
 	}
     
 }

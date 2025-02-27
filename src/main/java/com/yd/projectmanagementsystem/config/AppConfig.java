@@ -28,6 +28,7 @@ public class AppConfig {
 	        .authorizeHttpRequests(authorize -> authorize
 	            .requestMatchers("/api/payment/upgrade_plan/success").permitAll() // Allow unauthenticated access to this endpoint
 	            .requestMatchers("/auth/signin").permitAll() // Allow unauthenticated access to /auth/signin
+	            .requestMatchers("/auth/signup").permitAll() // Allow unauthenticated access to /auth/signin
 	            .requestMatchers("/api/public/**").permitAll() // Allow unauthenticated access to public APIs
 	            .requestMatchers("/api/**").authenticated() // Require authentication for all other /api/** endpoints
 	            .anyRequest().authenticated() // Require authentication for all other requests

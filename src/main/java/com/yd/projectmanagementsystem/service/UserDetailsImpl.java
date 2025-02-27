@@ -2,9 +2,11 @@ package com.yd.projectmanagementsystem.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,20 +19,38 @@ import com.yd.projectmanagementsystem.repository.UserRepository;
 public class UserDetailsImpl implements UserDetailsService {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(username);
+    public UserDetails loadUserByUsername(String email) {
+        
+    	User user;
+		try {
+			user = userService.findUserByEmail(email);
+	        if (user == null) {
+	            throw new UsernameNotFoundException("User not found with email: " + email);
+	        }
 
-        if (user == null) {
-            throw new UsernameNotFoundException("User not found with email: " + username);
-        }
+	        // Map roles to GrantedAuthority
+	        List<GrantedAuthority> authorities = new ArrayList<>();
+	        Set<String> roles = user.getRoles();
+	        if (roles != null) {
+	            for (String role : roles) {
+	                authorities.add(new SimpleGrantedAuthority(role));
+	            }
+	        }
 
-        // Map roles/authorities to GrantedAuthority
-        List<GrantedAuthority> authorities = new ArrayList<>();
+	        return new org.springframework.security.core.userdetails.User(
+	                user.getEmail(),
+	                user.getPassword(),
+	                authorities
+	        );
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 
-        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), authorities);
     }
 
 }

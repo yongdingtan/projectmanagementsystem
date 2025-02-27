@@ -5,7 +5,9 @@ import com.yd.projectmanagementsystem.model.User;
 
 public interface UserRepository extends JpaRepository<User, Long>{
 	
-	User findByEmail(String email);
+	User findUserByFullName(String fullName);
+	
+	User findUserByEmail(String email);
 	
 	User findUserByPaymentId(String paymentId);
 	

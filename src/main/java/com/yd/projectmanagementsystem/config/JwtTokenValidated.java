@@ -59,7 +59,6 @@ public class JwtTokenValidated extends OncePerRequestFilter {
 		    } catch (ExpiredJwtException e) {
 		        throw new BadCredentialsException("Token has expired", e);
 		    } catch (JwtException e) {
-		    	System.out.println(jwt);
 		        throw new BadCredentialsException("Invalid Token", e);
 		    } catch (Exception e) {
 		        throw new BadCredentialsException("Token processing error", e);

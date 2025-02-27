@@ -22,6 +22,14 @@ public class JwtProvider {
 		return claims.get("email", String.class);
 
 	}
+	
+	public static String getFullnameFromToken(String jwt) {
+
+		jwt = jwt.substring(7);
+		Claims claims = Jwts.parser().verifyWith(JwtUtil.getSigningKey()).build().parseSignedClaims(jwt).getPayload();
+		return claims.get("fullName", String.class);
+
+	}
 
 	public static boolean validateToken(String token) {
 		try {

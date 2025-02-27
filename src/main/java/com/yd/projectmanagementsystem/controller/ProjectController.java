@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.yd.projectmanagementsystem.config.JwtProvider;
 import com.yd.projectmanagementsystem.model.Chat;
 import com.yd.projectmanagementsystem.model.Invitation;
 import com.yd.projectmanagementsystem.model.Project;
@@ -35,160 +36,148 @@ import io.jsonwebtoken.JwtException;
 @RestController
 @RequestMapping("/api/project")
 public class ProjectController {
-	
+
 	@Autowired
 	private ProjectService projectService;
-	
+
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	private InvitationService invitationService;
-	
+
 	@GetMapping
-	public ResponseEntity<List<Project>> getProjects(
-			@RequestParam(required = false)String category,
-			@RequestParam(required = false) String tag,
-			@RequestHeader("Authorization") String jwt
-		) throws Exception {
-		
-	    if (jwt == null || jwt.isEmpty()) {
-	        throw new JwtException("JWT token is missing");
-	    }
+	public ResponseEntity<List<Project>> getProjects(@RequestParam(required = false) String category,
+			@RequestParam(required = false) String tag, @RequestHeader("Authorization") String jwt) throws Exception {
+
+		if (jwt == null || jwt.isEmpty()) {
+			throw new JwtException("JWT token is missing");
+		}
 		User user = userService.findUserProfileByJwt(jwt);
 		List<Project> projects = projectService.getProjectByUserAndCategoryAndTag(user, category, tag);
-		
+
 		return new ResponseEntity<>(projects, HttpStatus.OK);
 	}
-	
+
 	@GetMapping("/{projectId}")
-	public ResponseEntity<Project> getProjectById(
-			@PathVariable Long projectId
-		) throws Exception {
-		
-	    if (projectId == null || projectId <= 0) {
-	        throw new IllegalArgumentException("Invalid project ID");
-	    }
-		
+	public ResponseEntity<Project> getProjectById(@PathVariable Long projectId) throws Exception {
+
+		if (projectId == null || projectId <= 0) {
+			throw new IllegalArgumentException("Invalid project ID");
+		}
+
 		return new ResponseEntity<>(projectService.getProjectById(projectId), HttpStatus.OK);
 	}
-	
+
 	@PostMapping
-	public ResponseEntity<Project> createProject(
-			@RequestHeader("Authorization") String jwt,
-			@RequestBody @Validated Project project
-		) throws Exception {
-		
-	    if (jwt == null || jwt.isEmpty()) {
-	        throw new JwtException("JWT token is missing");
-	    }
+	public ResponseEntity<Project> createProject(@RequestHeader("Authorization") String jwt,
+			@RequestBody @Validated Project project) throws Exception {
+
+		if (jwt == null || jwt.isEmpty()) {
+			throw new JwtException("JWT token is missing");
+		}
 		User user = userService.findUserProfileByJwt(jwt);
 		Project createdProject = projectService.createProject(project, user);
-		
+
 		return new ResponseEntity<>(createdProject, HttpStatus.OK);
 	}
-	
+
 	@PatchMapping("/{projectId}")
-	public ResponseEntity<Project> updateProject(
-			@PathVariable Long projectId,
-			@RequestBody Project project
-		) throws Exception {
-		
-	    if (projectId == null || projectId <= 0) {
-	        throw new IllegalArgumentException("Invalid project ID");
-	    }
-		
+	public ResponseEntity<Project> updateProject(@PathVariable Long projectId, @RequestBody Project project)
+			throws Exception {
+
+		if (projectId == null || projectId <= 0) {
+			throw new IllegalArgumentException("Invalid project ID");
+		}
+
 		Project updatedProject = projectService.updateProject(project, projectId);
-		
+
 		return new ResponseEntity<>(updatedProject, HttpStatus.OK);
 	}
-	
+
 	@DeleteMapping("/{projectId}")
-	public ResponseEntity<MessageResponse> deleteProject(
-	        @PathVariable Long projectId,
-	        @RequestHeader("Authorization") String jwt
-	    ) throws Exception {
+	public ResponseEntity<MessageResponse> deleteProject(@PathVariable Long projectId,
+			@RequestHeader("Authorization") String jwt) throws Exception {
 
-	    if (projectId == null || projectId <= 0) {
-	        throw new IllegalArgumentException("Invalid project ID");
-	    }
-	    if (jwt == null || jwt.isEmpty()) {
-	        throw new JwtException("JWT token is missing");
-	    }
+		if (projectId == null || projectId <= 0) {
+			throw new IllegalArgumentException("Invalid project ID");
+		}
+		if (jwt == null || jwt.isEmpty()) {
+			throw new JwtException("JWT token is missing");
+		}
 
-	    User user = userService.findUserProfileByJwt(jwt);
-	    projectService.deleteProject(projectId, user.getId());
-
-	    MessageResponse res = new MessageResponse();
-	    res.setMessage("Project deleted successfully");
-	    return new ResponseEntity<>(res, HttpStatus.OK);
-	}
-	
-	@GetMapping("/search")
-	public ResponseEntity<List<Project>> searchProjects(
-			@RequestParam(required = false)String keyword,
-			@RequestHeader("Authorization") String jwt
-		) throws Exception {
-		
-	    if (jwt == null || jwt.isEmpty()) {
-	        throw new JwtException("JWT token is missing");
-	    }
-		
 		User user = userService.findUserProfileByJwt(jwt);
-		List<Project> projects = projectService.searchProjects(keyword, user);
-		
-		return new ResponseEntity<>(projects, HttpStatus.OK);
-	}
-	
-	@GetMapping("/{projectId}/chat")
-	public ResponseEntity<Chat> getChatByProjectId(
-			@PathVariable Long projectId
-		) throws Exception {
-		
-	    if (projectId == null || projectId <= 0) {
-	        throw new IllegalArgumentException("Invalid project ID");
-	    }
-		
-		return new ResponseEntity<>(projectService.getChatByProjectId(projectId), HttpStatus.OK);
-	}
-	
-	@PostMapping("/invite")
-	public ResponseEntity<MessageResponse> inviteProject(
-			@RequestBody InviteRequest req,
-			@RequestHeader("Authorization") String jwt,
-			@RequestBody @Validated Project project
-		) throws Exception {
-		
-	    if (jwt == null || jwt.isEmpty()) {
-	        throw new JwtException("JWT token is missing");
-	    }
-		
-		invitationService.sendInvitation(req.getEmail(), req.getProjectId());
-		
+		projectService.deleteProject(projectId, user.getId());
+
 		MessageResponse res = new MessageResponse();
-		res.setMessage("User invitation sent");
-		
+		res.setMessage("Project deleted successfully");
 		return new ResponseEntity<>(res, HttpStatus.OK);
 	}
-	
+
+	@GetMapping("/search")
+	public ResponseEntity<List<Project>> searchProjects(@RequestParam(required = false) String keyword,
+			@RequestHeader("Authorization") String jwt) throws Exception {
+
+		if (jwt == null || jwt.isEmpty()) {
+			throw new JwtException("JWT token is missing");
+		}
+
+		User user = userService.findUserProfileByJwt(jwt);
+		List<Project> projects = projectService.searchProjects(keyword, user);
+
+		return new ResponseEntity<>(projects, HttpStatus.OK);
+	}
+
+	@GetMapping("/{projectId}/chat")
+	public ResponseEntity<Chat> getChatByProjectId(@PathVariable Long projectId) throws Exception {
+
+		if (projectId == null || projectId <= 0) {
+			throw new IllegalArgumentException("Invalid project ID");
+		}
+
+		return new ResponseEntity<>(projectService.getChatByProjectId(projectId), HttpStatus.OK);
+	}
+
+	@PostMapping("/invite")
+	public ResponseEntity<MessageResponse> inviteProject(@RequestBody InviteRequest req,
+			@RequestHeader("Authorization") String jwt) throws Exception {
+
+		// Validate JWT token
+		if (jwt == null || jwt.isEmpty()) {
+			throw new JwtException("JWT token is missing");
+		}
+
+		// Extract and validate the token (example using JwtProvider)
+		String token = jwt.replace("Bearer ", "");
+		if (!JwtProvider.validateToken(token)) {
+			throw new JwtException("Invalid JWT token");
+		}
+
+		// Send invitation
+		invitationService.sendInvitation(req.getEmail(), req.getProjectId());
+
+		// Return success response
+		MessageResponse res = new MessageResponse();
+		res.setMessage("User invitation sent");
+
+		return new ResponseEntity<>(res, HttpStatus.OK);
+	}
+
 	@GetMapping("/accept_invitation")
-	public ResponseEntity<Invitation> acceptInviteProject(
-			@RequestParam String token,
-			@RequestHeader("Authorization") String jwt,
-			@RequestBody @Validated Project project
-		) throws Exception {
-		
-	    if (jwt == null || jwt.isEmpty()) {
-	        throw new JwtException("JWT token is missing");
-	    }
-		
+	public ResponseEntity<Invitation> acceptInviteProject(@RequestParam String token,
+			@RequestHeader("Authorization") String jwt, @RequestBody @Validated Project project) throws Exception {
+
+		if (jwt == null || jwt.isEmpty()) {
+			throw new JwtException("JWT token is missing");
+		}
+
 		User user = userService.findUserProfileByJwt(jwt);
 		Invitation invitation = invitationService.acceptInvitation(token, user.getId());
 		projectService.addUserToProject(invitation.getProjectId(), user.getId());
-		
+
 		return new ResponseEntity<>(invitation, HttpStatus.ACCEPTED);
 	}
-	
+
 	@GetMapping("/{projectId}/team")
 	public ResponseEntity<List<User>> getTeamByProjectId(@PathVariable Long projectId) throws Exception {
 		return new ResponseEntity<>(projectService.getTeam(projectId), HttpStatus.OK);

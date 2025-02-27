@@ -1,10 +1,6 @@
 package com.yd.projectmanagementsystem.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,32 +12,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
 
-import com.paypal.api.payments.Amount;
-import com.paypal.api.payments.Links;
-import com.paypal.api.payments.Payer;
-import com.paypal.api.payments.Payment;
-import com.paypal.api.payments.PaymentExecution;
-import com.paypal.api.payments.RedirectUrls;
-import com.paypal.api.payments.Transaction;
-import com.paypal.base.rest.APIContext;
 import com.paypal.base.rest.PayPalRESTException;
 import com.yd.projectmanagementsystem.model.PlanType;
-import com.yd.projectmanagementsystem.model.Subscription;
-import com.yd.projectmanagementsystem.model.User;
 import com.yd.projectmanagementsystem.response.PaymentLinkResponse;
 import com.yd.projectmanagementsystem.service.PaymentService;
-import com.yd.projectmanagementsystem.service.SubscriptionService;
-import com.yd.projectmanagementsystem.service.UserService;
 
 @RestController
 @RequestMapping("/api/payment")
 public class PaymentController {
-
-	@Autowired
-	private UserService userService;
-
-	@Autowired
-	private SubscriptionService subscriptionService;
 
 	@Autowired
 	private PaymentService paymentService;

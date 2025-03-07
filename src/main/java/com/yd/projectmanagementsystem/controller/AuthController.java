@@ -12,12 +12,15 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.yd.projectmanagementsystem.config.JwtProvider;
+import com.yd.projectmanagementsystem.exception.EmailAlreadyInUseException;
 import com.yd.projectmanagementsystem.model.User;
 import com.yd.projectmanagementsystem.repository.UserRepository;
 import com.yd.projectmanagementsystem.request.LoginRequest;
@@ -48,19 +51,24 @@ public class AuthController {
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     @PostMapping("/signup")
-    public ResponseEntity<AuthResponse> signup(@RequestBody User user) throws Exception {
+    public ResponseEntity<?> signup(@Validated @RequestBody User user, BindingResult bindingResult) throws Exception {
+        // Check for validation errors
+        if (bindingResult.hasErrors()) {
+            return new ResponseEntity<>(bindingResult.getAllErrors(), HttpStatus.BAD_REQUEST);
+        }
+
         // Check if the email is already in use
         User isUserExist = userService.findUserByEmail(user.getEmail());
         if (isUserExist != null) {
-            throw new Exception("Email already in use by another account");
+            throw new EmailAlreadyInUseException("Email already in use by another account");
         }
-        
+
         // Create a new user
         User createdUser = new User();
         createdUser.setPassword(passwordEncoder.encode(user.getPassword()));
         createdUser.setEmail(user.getEmail());
         createdUser.setFullName(user.getFullName());
-        
+
         // Assign a default role (e.g., "ROLE_USER")
         createdUser.setRoles(Set.of("ROLE_USER")); // Use Set.of to create an immutable set
 
@@ -72,13 +80,17 @@ public class AuthController {
         // Prepare the response
         AuthResponse res = new AuthResponse();
         res.setMessage("Signup success. Please log in.");
-        res.setJwt(null); // No JWT token is generated during signup
 
         return new ResponseEntity<>(res, HttpStatus.CREATED);
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<AuthResponse> signin(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> signin(@Validated @RequestBody LoginRequest loginRequest, BindingResult bindingResult) {
+        // Check for validation errors
+        if (bindingResult.hasErrors()) {
+            return new ResponseEntity<>(bindingResult.getAllErrors(), HttpStatus.BAD_REQUEST);
+        }
+
         String username = loginRequest.getEmail();
         String password = loginRequest.getPassword();
 

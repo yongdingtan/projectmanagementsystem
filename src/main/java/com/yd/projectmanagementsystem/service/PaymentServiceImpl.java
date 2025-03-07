@@ -84,7 +84,7 @@ public class PaymentServiceImpl implements PaymentService {
 				.findFirst().map(Links::getHref).orElseThrow(() -> new RuntimeException("Approval URL not found"));
 
 		// Prepare response
-		PaymentLinkResponse response = new PaymentLinkResponse();
+		PaymentLinkResponse response = new PaymentLinkResponse("");
 		response.setApprovalLink(approvalLink);
 		response.setAmount(amount);
 		response.setCurrency("SGD");

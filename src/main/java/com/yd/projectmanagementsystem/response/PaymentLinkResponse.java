@@ -14,9 +14,6 @@ public class PaymentLinkResponse {
     private String currency;
     private String message;
 
-    // Constructors
-    public PaymentLinkResponse() {}
-
     public PaymentLinkResponse(String message) {
         this.message = message;
     }

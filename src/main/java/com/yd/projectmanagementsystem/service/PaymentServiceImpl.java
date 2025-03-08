@@ -63,8 +63,11 @@ public class PaymentServiceImpl implements PaymentService {
 
 		// Redirect URLs
 		RedirectUrls redirectUrls = new RedirectUrls();
-		redirectUrls.setCancelUrl("http://localhost:8080/api/payment/upgrade_plan/cancel");
-		redirectUrls.setReturnUrl("http://localhost:8080/api/payment/upgrade_plan/success?planType=" + planType); // Include planType
+		redirectUrls
+				.setCancelUrl("https://projectmanagementsystem-frontend.onrender.com/api/payment/upgrade_plan/cancel");
+		redirectUrls.setReturnUrl(
+				"https://projectmanagementsystem-frontend.onrender.com/upgrade_plan/success?planType=" + planType); // Include
+																													// planType
 		// Create payment object
 		Payment payment = new Payment();
 		payment.setIntent("sale");
@@ -112,12 +115,13 @@ public class PaymentServiceImpl implements PaymentService {
 			if (user != null) {
 				subscriptionService.upgradeSubscription(user.getId(), planType);
 			}
-			String frontendSuccessUrl = "http://localhost:5173/upgrade_plan/success?planType=" + planType;
+			String frontendSuccessUrl = "https://projectmanagementsystem-frontend.onrender.com/upgrade_plan/success?planType="
+					+ planType;
 			return new RedirectView(frontendSuccessUrl);
 		} else {
 			// Payment failed
 			// Redirect to the frontend failure page
-			String frontendFailureUrl = "http://localhost:5173/upgrade_plan/failure";
+			String frontendFailureUrl = "https://projectmanagementsystem-frontend.onrender.com/upgrade_plan/failure";
 			return new RedirectView(frontendFailureUrl);
 		}
 	}

@@ -56,7 +56,7 @@ public class PaymentController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			// Redirect to the frontend error page
-			String frontendErrorUrl = "http://localhost:5173/upgrade_plan/error";
+			String frontendErrorUrl = "https://projectmanagementsystem-frontend.onrender.com/upgrade_plan/error";
 			return new RedirectView(frontendErrorUrl);
 		}
 	}

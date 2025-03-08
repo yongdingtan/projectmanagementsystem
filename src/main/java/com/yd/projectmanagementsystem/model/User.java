@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
+@Table(name = "\"user\"") // Escape the table name
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

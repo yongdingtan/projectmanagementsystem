@@ -31,7 +31,7 @@ public class InvitationServiceImpl implements InvitationService{
 		
 		invitationRepository.save(invitation);
 		
-		String invitationLink = "http://localhost:8080/accept_invitation?token="+invitationToken;
+		String invitationLink = "https://projectmanagementsystem-frontend.onrender.com/accept_invitation?token="+invitationToken;
 		emailService.sendEmailWithToken(email, invitationLink);
 		
 	}

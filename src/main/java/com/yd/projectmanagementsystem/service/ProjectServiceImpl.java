@@ -15,7 +15,6 @@ import com.yd.projectmanagementsystem.model.Team;
 import com.yd.projectmanagementsystem.model.User;
 import com.yd.projectmanagementsystem.repository.ProjectRepository;
 import com.yd.projectmanagementsystem.repository.TeamRepository;
-import com.yd.projectmanagementsystem.repository.UserRepository;
 
 @Service
 public class ProjectServiceImpl implements ProjectService{
@@ -28,9 +27,6 @@ public class ProjectServiceImpl implements ProjectService{
 	
 	@Autowired
 	private ChatService chatService;
-	
-	@Autowired
-	private UserRepository userRepository;
 	
 	@Autowired
 	private TeamRepository teamRepository;

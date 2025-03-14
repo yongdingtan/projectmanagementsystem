@@ -25,10 +25,10 @@ import com.yd.projectmanagementsystem.service.UserService;
 @RequestMapping("/api/comments")
 public class CommentController {
 	
-	@Autowired
+	@Autowired(required = false)
 	private CommentService commentService;
 	
-	@Autowired
+	@Autowired(required = false)
 	private UserService userService;
 	
 	@PostMapping

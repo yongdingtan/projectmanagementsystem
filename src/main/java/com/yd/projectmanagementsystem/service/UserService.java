@@ -1,5 +1,8 @@
 package com.yd.projectmanagementsystem.service;
 
+import java.util.List;
+
+import com.yd.projectmanagementsystem.model.Project;
 import com.yd.projectmanagementsystem.model.User;
 
 public interface UserService {
@@ -15,6 +18,10 @@ public interface UserService {
 	User findUserByPaymentId(String paymentId) throws Exception;
 	
 	User updateUserProjectSize(User user, int number);
+	
+	User saveUser(User user);
+	
+	List<Project> getProjectsForUser(Long userId);
 	
 	void updateUserPaymentId(User user, String paymentId) throws Exception;
 	

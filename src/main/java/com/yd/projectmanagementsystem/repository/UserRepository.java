@@ -1,6 +1,10 @@
 package com.yd.projectmanagementsystem.repository;
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+import com.yd.projectmanagementsystem.model.Project;
 import com.yd.projectmanagementsystem.model.User;
 
 public interface UserRepository extends JpaRepository<User, Long>{
@@ -10,6 +14,9 @@ public interface UserRepository extends JpaRepository<User, Long>{
 	User findUserByEmail(String email);
 	
 	User findUserByPaymentId(String paymentId);
+	
+    @Query("SELECT t.project FROM Team t JOIN t.members u WHERE u.id = :userId")
+    List<Project> findProjectsByUserId(Long userId);
 	
 
 }

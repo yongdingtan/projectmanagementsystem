@@ -43,7 +43,14 @@ public class AppConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         
         // Allow specific origins (replace with your frontend URL)
-        configuration.setAllowedOrigins(Arrays.asList("https://projectmanagementsystem-frontend.onrender.com"));
+        configuration.setAllowedOrigins(Arrays.asList(
+        		"https://projectmanagementsystem-frontend.onrender.com",
+                "http://localhost:3000", // React (default port)
+                "http://localhost:5173", // Vite (default port)
+                "http://localhost:4200",  // Angular (default port)
+                "http://localhost:4173",
+                "http://localhost:8080"
+        		));
 
         // Allow all HTTP methods
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));

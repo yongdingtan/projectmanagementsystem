@@ -1,6 +1,8 @@
 package com.yd.projectmanagementsystem.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.view.RedirectView;
 
 import com.yd.projectmanagementsystem.config.JwtProvider;
 import com.yd.projectmanagementsystem.dto.ProjectDTO;
@@ -37,13 +40,13 @@ import io.jsonwebtoken.JwtException;
 @RequestMapping("/api/project")
 public class ProjectController {
 
-    @Autowired
+	@Autowired(required = false)
     private ProjectService projectService;
 
-    @Autowired
+    @Autowired(required = false)
     private UserService userService;
 
-    @Autowired
+    @Autowired(required = false)
     private InvitationService invitationService;
 
     // Get all projects with optional filters
@@ -191,21 +194,34 @@ public class ProjectController {
     }
 
     @GetMapping("/accept_invitation")
-    public ResponseEntity<Invitation> acceptInviteProject(
+    public ResponseEntity<Map<String, String>> acceptInviteProject(
             @RequestParam String token,
-            @RequestHeader("Authorization") String jwt,
-            @RequestBody @Validated Project project) throws Exception {
+            @RequestHeader(value = "Authorization", required = false) String jwt) throws Exception {
 
-        if (jwt == null || jwt.isEmpty()) {
-            throw new JwtException("JWT token is missing");
+        User user = null;
+
+        // If JWT is provided, verify user
+        if (jwt != null && !jwt.isEmpty()) {
+            user = userService.findUserProfileByJwt(jwt);
         }
 
-        User user = userService.findUserProfileByJwt(jwt);
+        // If user is null, return a response indicating the user needs to log in
+        if (user == null) {
+            Map<String, String> response = new HashMap<>();
+            response.put("redirect", "/login?redirect=/accept-invitation?token=" + token);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+
+        // Accept invitation and add user to project
         Invitation invitation = invitationService.acceptInvitation(token, user.getId());
         projectService.addUserToProject(invitation.getProjectId(), user.getId());
 
-        return new ResponseEntity<>(invitation, HttpStatus.ACCEPTED);
+        // Return the project ID to the frontend
+        Map<String, String> response = new HashMap<>();
+        response.put("projectId", invitation.getProjectId().toString());
+        return ResponseEntity.ok(response);
     }
+
 
     @GetMapping("/{projectId}/team")
     public ResponseEntity<List<User>> getTeamByProjectId(@PathVariable Long projectId) throws Exception {

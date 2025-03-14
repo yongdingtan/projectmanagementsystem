@@ -33,19 +33,16 @@ import com.yd.projectmanagementsystem.service.UserService;
 @RequestMapping("/auth")
 public class AuthController {
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
+	@Autowired(required = false)
     private PasswordEncoder passwordEncoder;
 
-    @Autowired
+    @Autowired(required = false)
     private UserDetailsImpl userDetails;
 
-    @Autowired
+    @Autowired(required = false)
     private SubscriptionService subscriptionService;
     
-    @Autowired
+    @Autowired(required = false)
     private UserService userService;
     
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
@@ -73,7 +70,7 @@ public class AuthController {
         createdUser.setRoles(Set.of("ROLE_USER")); // Use Set.of to create an immutable set
 
         // Save the user to the database
-        User savedUser = userRepository.save(createdUser);
+        User savedUser = userService.saveUser(createdUser);
         // Create a subscription for the user (if applicable)
         subscriptionService.createSubscription(savedUser);
 

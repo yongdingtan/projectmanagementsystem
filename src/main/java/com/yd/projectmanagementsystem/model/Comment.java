@@ -1,6 +1,7 @@
 package com.yd.projectmanagementsystem.model;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -23,7 +24,7 @@ public class Comment {
 	
 	private String content;
 	
-	private LocalDate createdDate;
+	private LocalDateTime createdDateTime;
 	
 	@ManyToOne
 	private User user;
@@ -47,12 +48,12 @@ public class Comment {
 		this.content = content;
 	}
 
-	public LocalDate getCreatedDate() {
-		return createdDate;
+	public LocalDateTime getCreatedDateTime() {
+		return createdDateTime;
 	}
 
-	public void setCreatedDate(LocalDate createdDate) {
-		this.createdDate = createdDate;
+	public void setCreatedDateTime(LocalDateTime createdDateTime) {
+		this.createdDateTime = createdDateTime;
 	}
 
 	public User getUser() {

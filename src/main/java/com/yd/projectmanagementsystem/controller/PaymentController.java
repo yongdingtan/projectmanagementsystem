@@ -21,9 +21,15 @@ import com.yd.projectmanagementsystem.service.PaymentService;
 @RequestMapping("/api/payment")
 public class PaymentController {
 
-	@Autowired
+	@Autowired(required = false)
 	private PaymentService paymentService;
+	
+	//Production
+	private final String frontendUrl = "https://projectmanagementsystem-frontend.onrender.com";
 
+	//Local
+	private final String localUrl = "http://localhost:4173";
+	
 	@PostMapping("/{planType}")
 	public ResponseEntity<PaymentLinkResponse> createPaymentLink(@RequestHeader("Authorization") String jwt,
 			@PathVariable String planType) throws Exception {
@@ -56,7 +62,7 @@ public class PaymentController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			// Redirect to the frontend error page
-			String frontendErrorUrl = "https://projectmanagementsystem-frontend.onrender.com/upgrade_plan/error";
+			String frontendErrorUrl = localUrl + "/upgrade_plan/error";
 			return new RedirectView(frontendErrorUrl);
 		}
 	}

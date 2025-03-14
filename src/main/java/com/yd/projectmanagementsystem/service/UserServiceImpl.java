@@ -1,11 +1,13 @@
 package com.yd.projectmanagementsystem.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.yd.projectmanagementsystem.config.JwtProvider;
+import com.yd.projectmanagementsystem.model.Project;
 import com.yd.projectmanagementsystem.model.User;
 import com.yd.projectmanagementsystem.repository.UserRepository;
 
@@ -59,5 +61,15 @@ public class UserServiceImpl implements UserService{
         user.setPaymentId(paymentId); // Update the paymentId
         userRepository.save(user); // Save the updated user
     }
+
+	@Override
+	public User saveUser(User user) {
+		return userRepository.save(user);
+	}
+
+	@Override
+	public List<Project> getProjectsForUser(Long userId) {
+		return userRepository.findProjectsByUserId(userId);
+	}
 
 }

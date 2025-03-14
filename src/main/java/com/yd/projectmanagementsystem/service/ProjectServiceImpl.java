@@ -18,17 +18,17 @@ import com.yd.projectmanagementsystem.repository.TeamRepository;
 
 @Service
 public class ProjectServiceImpl implements ProjectService{
-	
-	@Autowired
+
+	@Autowired(required = false)
 	private ProjectRepository projectRepository;
 	
-	@Autowired
+	@Autowired(required = false)
 	private UserService userService;
-	
-	@Autowired
+
+	@Autowired(required = false)
 	private ChatService chatService;
-	
-	@Autowired
+
+	@Autowired(required = false)
 	private TeamRepository teamRepository;
 
 	@Override
@@ -67,23 +67,43 @@ public class ProjectServiceImpl implements ProjectService{
 	    // Save the updated project with the chat
 	    return projectRepository.save(savedProject);
 	}
+	
 	@Override
 	public List<Project> getProjectByUserAndCategoryAndTag(User user, String category, String tag) throws Exception {
-		
-		List<Project> projects = projectRepository.findByOwner(user);
-		
-		if(category!=null) {
-			projects = projects.stream().filter(project -> project.getCategory().equals(category))
-					.collect(Collectors.toList());
-		}
-		
-		if(tag!=null) {
-			projects = projects.stream().filter(project -> project.getTags().contains(tag))
-					.collect(Collectors.toList());
-		}
-		
-		return projects;
+	    
+	    // Get the list of projects the user owns
+	    List<Project> projects = projectRepository.findByOwner(user);
+	    
+	    // Get the list of projects from the teams the user is a part of
+	    List<Project> projectsFromTeam = userService.getProjectsForUser(user.getId());
+	    
+	    // Combine the two lists
+	    List<Project> allProjects = new ArrayList<>();
+	    allProjects.addAll(projects);
+	    allProjects.addAll(projectsFromTeam);
+	    
+	    // Remove duplicates by converting to a Set or using distinct()
+	    allProjects = allProjects.stream()
+	                             .distinct()  // Removes duplicates based on the `equals` method in the Project class
+	                             .collect(Collectors.toList());
+	    
+	    // Filter by category if provided
+	    if (category != null) {
+	        allProjects = allProjects.stream()
+	                                 .filter(project -> project.getCategory().equals(category))
+	                                 .collect(Collectors.toList());
+	    }
+
+	    // Filter by tag if provided
+	    if (tag != null) {
+	        allProjects = allProjects.stream()
+	                                 .filter(project -> project.getTags().contains(tag))
+	                                 .collect(Collectors.toList());
+	    }
+
+	    return allProjects;
 	}
+
 
 	@Override
 	public Project getProjectById(Long projectId) throws Exception {

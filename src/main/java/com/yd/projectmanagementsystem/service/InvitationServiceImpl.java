@@ -13,11 +13,17 @@ import jakarta.mail.MessagingException;
 @Service
 public class InvitationServiceImpl implements InvitationService{
 
-	@Autowired
+	@Autowired(required=false)
 	private InvitationRepository invitationRepository;
 	
-	@Autowired
+	@Autowired(required=false)
 	private EmailService emailService;
+	
+	//Production
+	private final String frontendUrl = "https://projectmanagementsystem-frontend.onrender.com";
+
+	//Local
+	private final String localUrl = "http://localhost:4173";
 	
 	@Override
 	public void sendInvitation(String email, Long projectId) throws MessagingException {
@@ -31,7 +37,7 @@ public class InvitationServiceImpl implements InvitationService{
 		
 		invitationRepository.save(invitation);
 		
-		String invitationLink = "https://projectmanagementsystem-frontend.onrender.com/accept_invitation?token="+invitationToken;
+		String invitationLink = localUrl + "/api/project/accept_invitation?token="+invitationToken;
 		emailService.sendEmailWithToken(email, invitationLink);
 		
 	}

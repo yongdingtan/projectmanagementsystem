@@ -22,13 +22,13 @@ import com.yd.projectmanagementsystem.service.UserService;
 @RequestMapping("/api/messages")
 public class MessageController {
 	
-	@Autowired
+	@Autowired(required = false)
 	private MessageService messageService;
 	
-	@Autowired
+	@Autowired(required = false)
 	private UserService userService;
 	
-	@Autowired
+	@Autowired(required = false)
 	private ProjectService projectService;
 	
 	

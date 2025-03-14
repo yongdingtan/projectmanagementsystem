@@ -48,7 +48,7 @@ public class CommentServiceImpl implements CommentService{
 		
 		comment.setIssue(issue);
 		comment.setUser(user);
-		comment.setCreatedDate(LocalDate.now());
+		comment.setCreatedDateTime(LocalDateTime.now());
 		comment.setContent(content);
 		
 		Comment savedComment = commentRepository.save(comment);

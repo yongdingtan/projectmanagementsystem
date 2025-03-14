@@ -26,10 +26,10 @@ import com.yd.projectmanagementsystem.service.UserService;
 @RequestMapping("/api/issue")
 public class IssueController {
 	
-	@Autowired
+	@Autowired(required = false)
 	private IssueService issueService;
 	
-	@Autowired
+	@Autowired(required = false)
 	private UserService userService;
 	
 	@GetMapping("/{issueId}")

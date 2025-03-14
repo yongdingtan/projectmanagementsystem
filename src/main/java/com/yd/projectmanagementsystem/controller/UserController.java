@@ -16,7 +16,7 @@ import com.yd.projectmanagementsystem.service.UserService;
 @RequestMapping("/api/users")
 public class UserController {
 	
-	@Autowired
+	@Autowired(required = false)
 	private UserService userService;
 	
 	@GetMapping("/profile")

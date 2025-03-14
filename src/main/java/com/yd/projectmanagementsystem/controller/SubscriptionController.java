@@ -20,10 +20,10 @@ import com.yd.projectmanagementsystem.service.UserService;
 @RequestMapping("/api/subscription")
 public class SubscriptionController {
 	
-	@Autowired
+	@Autowired(required = false)
 	private SubscriptionService subscriptionService;
 	
-	@Autowired
+	@Autowired(required = false)
 	private UserService userService;
 	
 	@GetMapping("/user")

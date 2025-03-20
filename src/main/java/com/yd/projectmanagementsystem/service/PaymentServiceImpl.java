@@ -41,10 +41,10 @@ public class PaymentServiceImpl implements PaymentService {
 	private SubscriptionService subscriptionService;
 	
 	//Production
-	private final String frontendUrl = "https://projectmanagementsystem-frontend.onrender.com";
+	private final String url = "https://projectmanagementsystem-frontend.onrender.com";
 
 	//Local
-	private final String localUrl = "http://localhost:4173";
+	//private final String url = "http://localhost:4173";
 
 	@Override
 	public PaymentLinkResponse createPayment(String jwt, int amount, String planType) throws Exception {
@@ -70,9 +70,9 @@ public class PaymentServiceImpl implements PaymentService {
 		// Redirect URLs
 		RedirectUrls redirectUrls = new RedirectUrls();
 		redirectUrls
-				.setCancelUrl(frontendUrl + "/api/payment/upgrade_plan/cancel");
+				.setCancelUrl(url + "/api/payment/upgrade_plan/cancel");
 		redirectUrls.setReturnUrl(
-				frontendUrl + "/upgrade_plan/success?planType=" + planType); // Include
+				url + "/upgrade_plan/success?planType=" + planType); // Include
 																													// planType
 		// Create payment object
 		Payment payment = new Payment();
@@ -121,13 +121,13 @@ public class PaymentServiceImpl implements PaymentService {
 			if (user != null) {
 				subscriptionService.upgradeSubscription(user.getId(), planType);
 			}
-			String frontendSuccessUrl = frontendUrl + "/upgrade_plan/success?planType="
+			String frontendSuccessUrl = url + "/upgrade_plan/success?planType="
 					+ planType;
 			return new RedirectView(frontendSuccessUrl);
 		} else {
 			// Payment failed
 			// Redirect to the frontend failure page
-			String frontendFailureUrl = frontendUrl + "/upgrade_plan/failure";
+			String frontendFailureUrl = url + "/upgrade_plan/failure";
 			return new RedirectView(frontendFailureUrl);
 		}
 	}

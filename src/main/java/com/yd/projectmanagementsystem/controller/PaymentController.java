@@ -25,10 +25,10 @@ public class PaymentController {
 	private PaymentService paymentService;
 	
 	//Production
-	private final String frontendUrl = "https://projectmanagementsystem-frontend.onrender.com";
+	private final String url = "https://projectmanagementsystem-frontend.onrender.com";
 
 	//Local
-	private final String localUrl = "http://localhost:4173";
+	//private final String url = "http://localhost:4173";
 	
 	@PostMapping("/{planType}")
 	public ResponseEntity<PaymentLinkResponse> createPaymentLink(@RequestHeader("Authorization") String jwt,
@@ -62,7 +62,7 @@ public class PaymentController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			// Redirect to the frontend error page
-			String frontendErrorUrl = localUrl + "/upgrade_plan/error";
+			String frontendErrorUrl = url + "/upgrade_plan/error";
 			return new RedirectView(frontendErrorUrl);
 		}
 	}

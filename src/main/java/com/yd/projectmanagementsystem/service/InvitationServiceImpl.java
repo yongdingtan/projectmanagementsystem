@@ -20,10 +20,10 @@ public class InvitationServiceImpl implements InvitationService{
 	private EmailService emailService;
 	
 	//Production
-	private final String frontendUrl = "https://projectmanagementsystem-frontend.onrender.com";
+	private final String url = "https://projectmanagementsystem-frontend.onrender.com";
 
 	//Local
-	private final String localUrl = "http://localhost:4173";
+	//private final String url = "http://localhost:4173";
 	
 	@Override
 	public void sendInvitation(String email, Long projectId) throws MessagingException {
@@ -37,7 +37,7 @@ public class InvitationServiceImpl implements InvitationService{
 		
 		invitationRepository.save(invitation);
 		
-		String invitationLink = localUrl + "/api/project/accept_invitation?token="+invitationToken;
+		String invitationLink = url + "/api/project/accept_invitation?token="+invitationToken;
 		emailService.sendEmailWithToken(email, invitationLink);
 		
 	}

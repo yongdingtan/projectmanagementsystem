@@ -10,4 +10,6 @@ public interface MessageService {
 	
 	List<Message> getMessagesByProjectId(Long projectId) throws Exception;
 
+	void deleteMessageById(Long messageId) throws Exception;
+
 }

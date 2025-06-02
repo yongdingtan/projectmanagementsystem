@@ -34,7 +34,7 @@ public class Chat {
 	
 	@JsonIgnore
 	@OneToMany(mappedBy = "chat", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Message> messages;
+	private List<Message> messages = new ArrayList<>();;
 	
 	@ManyToMany
 	private List<User> users = new ArrayList<>();

@@ -41,10 +41,10 @@ public class PaymentServiceImpl implements PaymentService {
 	private SubscriptionService subscriptionService;
 	
 	//Production
-	private final String url = "https://projectmanagementsystem-frontend.onrender.com";
+	//private final String url = "https://projectmanagementsystem-frontend.onrender.com";
 
 	//Local
-	//private final String url = "http://localhost:4173";
+	private final String url = "http://localhost:4173";
 
 	@Override
 	public PaymentLinkResponse createPayment(String jwt, int amount, String planType) throws Exception {

@@ -50,5 +50,14 @@ public class MessageServiceImpl implements MessageService{
 		
 		return findByChatIdOrderByCreatedAtAsc;
 	}
+	
+	@Override
+	public void deleteMessageById(Long messageId) throws Exception {
+	    Message message = messageRepository.findById(messageId)
+	        .orElseThrow(() -> new Exception("Message not found"));
+	    Chat chat = message.getChat();
+	    chat.getMessages().remove(message); // Ensure orphanRemoval takes effect
+	    messageRepository.delete(message);
+	}
 
 }

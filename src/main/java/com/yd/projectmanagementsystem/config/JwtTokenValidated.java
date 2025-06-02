@@ -23,53 +23,57 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public class JwtTokenValidated extends OncePerRequestFilter {
 
-	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-			throws ServletException, IOException {
-		
-		String jwt = request.getHeader(JwtConstant.JWT_HEADER);
-		
-		
-		
-		if (jwt != null) {
-		    jwt = jwt.substring(7); // Remove "Bearer " prefix if present
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, 
+                                  HttpServletResponse response, 
+                                  FilterChain filterChain)
+            throws ServletException, IOException {
 
-		    try {
-		        // Create a SecretKey for HMAC signing
-		        SecretKey key = Keys.hmacShaKeyFor(JwtConstant.SECRET_KEY.getBytes());
+        String jwt = request.getHeader(JwtConstant.JWT_HEADER);
 
-		        // Parse and validate the JWT token
-		        Claims claims = Jwts.parser()
-				        	    .verifyWith(key)
-				        	    .build()
-				        	    .parseSignedClaims(jwt)
-				        	    .getPayload();
+        if (jwt == null || !jwt.startsWith("Bearer ")) {
+            logger.warn("Missing or invalid Authorization header");
+            filterChain.doFilter(request, response);
+            return;
+        }
 
-		        // Retrieve claims
-		        String email = claims.get("email", String.class);
-		        String authorities = claims.get("authorities", String.class);
+        jwt = jwt.substring(7); // Remove "Bearer " prefix
 
-		        // Convert authorities to a list of GrantedAuthority
-		        List<GrantedAuthority> auths = AuthorityUtils.commaSeparatedStringToAuthorityList(authorities);
+        try {
+            SecretKey key = Keys.hmacShaKeyFor(JwtConstant.SECRET_KEY.getBytes());
 
-		        // Set authentication in the security context
-		        Authentication authentication = new UsernamePasswordAuthenticationToken(email, null, auths);
-		        SecurityContextHolder.getContext().setAuthentication(authentication);
+            Claims claims = Jwts.parser()
+                    .verifyWith(key)
+                    .build()
+                    .parseSignedClaims(jwt)
+                    .getPayload();
+            
 
-		    } catch (ExpiredJwtException e) {
-		        throw new BadCredentialsException("Token has expired", e);
-		    } catch (JwtException e) {
-		        throw new BadCredentialsException("Invalid Token", e);
-		    } catch (Exception e) {
-		        throw new BadCredentialsException("Token processing error", e);
-		    }
-		}
+            String email = claims.get("email", String.class);
+            String authorities = claims.get("authorities", String.class);
+            
+            if (authorities == null || authorities.isBlank()) {
+                authorities = "ROLE_USER"; // default/fallback role
+            }
 
-		
-		filterChain.doFilter(request, response);
-		
-	}
+            List<GrantedAuthority> auths = AuthorityUtils.commaSeparatedStringToAuthorityList(authorities);
+            Authentication authentication = new UsernamePasswordAuthenticationToken(email, null, auths);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
+        } catch (ExpiredJwtException e) {
+            logger.error("Token expired: " + e.getMessage());
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token expired");
+            return;
+        } catch (JwtException | IllegalArgumentException e) {
+            logger.error("Invalid token: " + e.getMessage());
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Invalid token");
+            return;
+        } catch (Exception e) {
+            logger.error("Authentication error: " + e.getMessage());
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Authentication failed");
+            return;
+        }
 
-
+        filterChain.doFilter(request, response);
+    }
 }

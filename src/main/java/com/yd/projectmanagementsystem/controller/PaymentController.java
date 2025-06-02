@@ -25,10 +25,10 @@ public class PaymentController {
 	private PaymentService paymentService;
 	
 	//Production
-	private final String url = "https://projectmanagementsystem-frontend.onrender.com";
+	//private final String url = "https://projectmanagementsystem-frontend.onrender.com";
 
 	//Local
-	//private final String url = "http://localhost:4173";
+	private final String url = "http://localhost:4173";
 	
 	@PostMapping("/{planType}")
 	public ResponseEntity<PaymentLinkResponse> createPaymentLink(@RequestHeader("Authorization") String jwt,

@@ -20,10 +20,10 @@ public class InvitationServiceImpl implements InvitationService{
 	private EmailService emailService;
 	
 	//Production
-	private final String url = "https://projectmanagementsystem-frontend.onrender.com";
+	//private final String url = "https://projectmanagementsystem-frontend.onrender.com";
 
 	//Local
-	//private final String url = "http://localhost:4173";
+	private final String url = "http://localhost:4173";
 	
 	@Override
 	public void sendInvitation(String email, Long projectId) throws MessagingException {

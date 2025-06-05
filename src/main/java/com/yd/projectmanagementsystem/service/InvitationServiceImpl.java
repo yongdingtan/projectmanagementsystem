@@ -3,6 +3,7 @@ package com.yd.projectmanagementsystem.service;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.yd.projectmanagementsystem.model.Invitation;
@@ -18,12 +19,10 @@ public class InvitationServiceImpl implements InvitationService{
 	
 	@Autowired(required=false)
 	private EmailService emailService;
-	
-	//Production
-	//private final String url = "https://projectmanagementsystem-frontend.onrender.com";
-
+		
 	//Local
-	private final String url = "http://localhost:4173";
+	@Value("${frontend.url}")
+	private String url;
 	
 	@Override
 	public void sendInvitation(String email, Long projectId) throws MessagingException {

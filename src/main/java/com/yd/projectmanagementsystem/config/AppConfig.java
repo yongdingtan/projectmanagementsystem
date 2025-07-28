@@ -44,13 +44,14 @@ public class AppConfig {
         
         // Allow specific origins (replace with your frontend URL)
         configuration.setAllowedOrigins(Arrays.asList(
-        		"https://projectmanagementsystem-frontend.onrender.com",
-                "http://localhost:3000", // React (default port)
-                "http://localhost:5173", // Vite (default port)
-                "http://localhost:4200",  // Angular (default port)
-                "http://localhost:4173",
-                "http://localhost:8080"
-        		));
+        	    "http://54.206.69.167",
+        	    "https://projectmanagementsystem-frontend.onrender.com",
+        	    "http://localhost:3000",
+        	    "http://localhost:5173",
+        	    "http://localhost:4200",
+        	    "http://localhost:4173",
+        	    "http://localhost:8080"
+        	));
 
         // Allow all HTTP methods
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));

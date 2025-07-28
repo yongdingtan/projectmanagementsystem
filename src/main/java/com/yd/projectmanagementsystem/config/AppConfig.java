@@ -44,7 +44,7 @@ public class AppConfig {
         
         // Allow specific origins (replace with your frontend URL)
         configuration.setAllowedOrigins(Arrays.asList(
-        	    "http://54.206.69.167",
+        	    "http://54.206.69.167:8080",
         	    "https://projectmanagementsystem-frontend.onrender.com",
         	    "http://localhost:3000",
         	    "http://localhost:5173",

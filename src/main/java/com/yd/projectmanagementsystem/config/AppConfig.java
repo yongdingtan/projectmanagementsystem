@@ -50,7 +50,7 @@ public class AppConfig {
             "http://localhost:4200",
             "http://localhost:4173",
             "http://localhost:8080",
-            "http://54.206.69.167:8080".
+            "http://54.206.69.167:8080",
             "http://54.206.69.167"
         ));
 
